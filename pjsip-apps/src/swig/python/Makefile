@@ -8,13 +8,13 @@ else
   PYTHON_EXE=python2
 endif
 
-#PYTHON_SETUP_FLAGS = --inplace 
+#PYTHON_SETUP_FLAGS = --inplace
 ifeq ($(OS),Windows_NT)
-  PYTHON_PKG_DIR := $(shell $(PYTHON_EXE) -m site --user-site | sed 's/\\/\//g')
+  PYTHON_PKG_DIR := $(shell $(PYTHON_EXE) -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])' | sed 's/\\/\//g')
   PYTHON_SETUP_FLAGS += --compiler=mingw32
   GCC_EXE=gcc.exe
 else
-  PYTHON_PKG_DIR := $(shell $(PYTHON_EXE) -m site --user-site)
+  PYTHON_PKG_DIR := $(shell $(PYTHON_EXE) -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
   GCC_EXE=
 endif
 
@@ -22,7 +22,7 @@ SWIG_FLAGS=-I../../../../pjlib/include \
 		   -I../../../../pjlib-util/include \
 		   -I../../../../pjmedia/include \
 		   -I../../../../pjsip/include \
-		   -I../../../../pjnath/include -c++ 
+		   -I../../../../pjnath/include -c++
 SRC_DIR=../../../../pjsip/include
 SRCS=$(SRC_DIR)/pjsua2/endpoint.hpp $(SRC_DIR)/pjsua2/types.hpp
 
@@ -48,9 +48,8 @@ clean distclean realclean:
 	rm -f gcc.exe g++.exe
 
 install:
-	$(PYTHON_EXE) setup.py install --user
+	$(PYTHON_EXE) setup.py install
 
 uninstall:
 	rm -f $(PYTHON_PKG_DIR)/pjsua2*
 	rm -f $(PYTHON_PKG_DIR)/_pjsua2*
-
